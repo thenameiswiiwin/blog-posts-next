@@ -1,4 +1,4 @@
-import "@styles/globals.css";
+import '@styles/globals.css';
 
 export default function RootLayout({
   children,
@@ -14,7 +14,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <main className="bg-page-gradient pt-nav-height">{children}</main>
+        <div className="overflow-hidden rounded-lg bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <main className="bg-page-gradient pt-nav-height">{children}</main>
+          </div>
+        </div>
       </body>
     </html>
   );
