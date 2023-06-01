@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import clsx from 'clsx';
-import Link from 'next/link';
-import { useState } from 'react';
+import clsx from "clsx";
+import Link from "next/link";
+import { useState } from "react";
 
-const periods = ['Today', 'This Week', 'This Month'];
+const periods = ["Today", "This Week", "This Month"] as const;
+
+type Period = (typeof periods)[number];
 
 export const Timeline = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('Today');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>("Today");
 
-  const selectPeriod = (period: string) => setSelectedPeriod(period);
+  const selectPeriod = (period: Period) => setSelectedPeriod(period);
   return (
     <div className="rounded-lg px-4 py-5 shadow-lg sm:px-6 sm:py-2">
       <div>
@@ -34,13 +36,13 @@ export const Timeline = () => {
                 <Link
                   key={period}
                   href="#"
-                  aria-current={period ? 'page' : undefined}
+                  aria-current={period ? "page" : undefined}
                   onClick={() => selectPeriod(period)}
                   className={clsx(
-                    'w-1/4 cursor-pointer border-b-2 px-1 py-4 text-center text-sm font-medium',
+                    "w-1/4 cursor-pointer border-b-2 px-1 py-4 text-center text-sm font-medium",
                     selectedPeriod === period
-                      ? 'border-green-500 text-green-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                      ? "border-green-500 text-green-600"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   )}
                 >
                   {period}
