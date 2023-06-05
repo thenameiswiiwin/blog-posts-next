@@ -9,3 +9,31 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  posts     Post[]
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  name        String
+  description String?
+  created     DateTime
+  deleted     Boolean  @default(false)
+
+  @@unique([ownerId, name])
+  @@index([ownerId, id])
+}

@@ -15,6 +15,9 @@
     "commit": "cz",
     "prepare": "husky install"
   },
+  "prisma": {
+    "seed": "ts-node -P tsconfig-seed.json -r tsconfig-paths/register --transpileOnly prisma/seed.ts"
+  },
   "dependencies": {
     "@next/font": "13.1.1",
     "@prisma/client": "^4.15.0",
@@ -26,6 +29,7 @@
     "cookie": "^0.5.0",
     "css-reset-and-normalize": "^2.3.6",
     "jose": "^4.14.4",
+    "luxon": "^3.3.0",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -38,6 +42,7 @@
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
     "@commitlint/cz-commitlint": "^17.3.0",
+    "@types/luxon": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",
     "autoprefixer": "^10.4.13",
