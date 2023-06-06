@@ -1,10 +1,13 @@
 'use client';
 
+import type { TimelinePost } from '@lib/posts';
 import { thisMonth, thisWeek, today } from '@lib/posts';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+
+import { TimelineItem } from './TimelineItem';
 
 const periods = ['Today', 'This Week', 'This Month'] as const;
 
@@ -13,7 +16,7 @@ type Period = (typeof periods)[number];
 export const Timeline = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('Today');
 
-  const posts = useMemo(() => {
+  const posts = useMemo<TimelinePost[]>(() => {
     return [today, thisWeek, thisMonth]
       .map((post) => {
         return {
@@ -86,17 +89,7 @@ export const Timeline = () => {
                 key={post.id}
                 className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
               >
-                <Link href={''} className="flex gap-x-4">
-                  <div className="min-w-0 flex-auto">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      <span className="absolute inset-x-0 -top-px bottom-0" />
-                      {post.title}
-                    </p>
-                    <p className="mt-1 flex text-xs leading-5 text-gray-500">
-                      {post.created.toFormat('MMMM dd, yyyy')}
-                    </p>
-                  </div>
-                </Link>
+                <TimelineItem post={post} />
               </li>
             ))}
           </ul>

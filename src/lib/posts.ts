@@ -3,6 +3,10 @@ import { DateTime } from 'luxon';
 export interface Post {
   id: string;
   title: string;
+  created: string | null;
+}
+
+export interface TimelinePost extends Omit<Post, 'created'> {
   created: DateTime;
 }
 
