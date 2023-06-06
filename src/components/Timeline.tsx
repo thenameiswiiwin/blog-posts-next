@@ -1,7 +1,11 @@
 'use client';
 
 import { periods } from '@lib/constants';
-import { filteredPosts, setSelectedPeriod } from '@stores/features/postsSlice';
+import {
+  fetchPosts,
+  filteredPosts,
+  setSelectedPeriod,
+} from '@stores/features/postsSlice';
 import { useAppDispatch, useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -12,6 +16,7 @@ export const Timeline = () => {
   const postsStore = useAppSelector((state) => state.postsReducer);
   const dispatch = useAppDispatch();
 
+  dispatch(fetchPosts());
   return (
     <div>
       <div className="rounded-lg px-4 py-5 shadow-lg sm:px-6 sm:py-2">

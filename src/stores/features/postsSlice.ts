@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 import type { Period } from '@lib/constants';
 import type { Post, TimelinePost } from '@lib/posts';
-import { thisMonth, thisWeek, today } from '@lib/posts';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
 
 interface PostsState {
@@ -13,14 +12,23 @@ interface PostsState {
 }
 
 const initialState = {
-  ids: [today.id, thisWeek.id, thisMonth.id],
-  all: new Map([
-    [today.id, today],
-    [thisWeek.id, thisWeek],
-    [thisMonth.id, thisMonth],
-  ]),
+  ids: [],
+  all: new Map(),
   selectedPeriod: 'Today',
 } as PostsState;
+
+function delay() {
+  return new Promise<void>((res) => {
+    setTimeout(res, 1500);
+  });
+}
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
+  const res = await window.fetch('/api/posts');
+  const data = (await res.json()) as Post[];
+  await delay();
+  return data;
+});
 
 export const usePosts = createSlice({
   name: 'posts',
@@ -29,6 +37,19 @@ export const usePosts = createSlice({
     setSelectedPeriod: (state, action: PayloadAction<Period>) => {
       state.selectedPeriod = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchPosts.fulfilled, (state, action) => {
+      const ids: string[] = [];
+      const all = new Map<string, Post>();
+      action.payload.forEach((post) => {
+        ids.push(post.id);
+        all.set(post.id, post);
+      });
+
+      state.ids = ids;
+      state.all = all;
+    });
   },
 });
 
