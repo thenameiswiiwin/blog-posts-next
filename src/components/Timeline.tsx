@@ -4,7 +4,7 @@ import { thisMonth, thisWeek, today } from '@lib/posts';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const periods = ['Today', 'This Week', 'This Month'] as const;
 
@@ -12,10 +12,9 @@ type Period = (typeof periods)[number];
 
 export const Timeline = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('Today');
-  const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const posts = [today, thisWeek, thisMonth]
+  const posts = useMemo(() => {
+    return [today, thisWeek, thisMonth]
       .map((post) => {
         return {
           ...post,
@@ -33,8 +32,6 @@ export const Timeline = () => {
 
         return post;
       });
-
-    setPosts(posts);
   }, [selectedPeriod]);
 
   const selectPeriod = (period: Period) => setSelectedPeriod(period);
