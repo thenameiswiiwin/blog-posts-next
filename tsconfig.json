@@ -25,6 +25,7 @@
       "@hooks/*": ["./src/hooks/*"],
       "@lib/*": ["./src/lib/*"],
       "@prisma/*": ["./prisma/*"],
+      "@stores/*": ["./src/stores/*"],
       "@styles/*": ["./src/styles/*"]
     }
   },

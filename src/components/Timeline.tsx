@@ -1,7 +1,7 @@
 'use client';
 
 import type { TimelinePost } from '@lib/posts';
-import { thisMonth, thisWeek, today } from '@lib/posts';
+import { useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
@@ -15,10 +15,17 @@ type Period = (typeof periods)[number];
 
 export const Timeline = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('Today');
+  const postsStore = useAppSelector((state) => state.postsReducer);
+  /* const dispatch = useAppDispatch(); */
 
   const posts = useMemo<TimelinePost[]>(() => {
-    return [today, thisWeek, thisMonth]
-      .map((post) => {
+    return postsStore.ids
+      .map((id) => {
+        const post = postsStore.all.get(id);
+        if (!post) {
+          throw Error(`Post with id of ${id} was expected but not found.`);
+        }
+
         return {
           ...post,
           created: DateTime.fromISO(post.created),
