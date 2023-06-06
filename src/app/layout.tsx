@@ -16,13 +16,13 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers>
-          <div className="overflow-hidden rounded-lg bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <main className="bg-page-gradient pt-nav-height">{children}</main>
-            </div>
+        <div className="overflow-hidden rounded-lg bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <main className="bg-page-gradient pt-nav-height">
+              <Providers>{children}</Providers>
+            </main>
           </div>
-        </Providers>
+        </div>
       </body>
     </html>
   );

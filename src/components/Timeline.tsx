@@ -1,50 +1,17 @@
 'use client';
 
-import type { TimelinePost } from '@lib/posts';
-import { useAppSelector } from '@stores/hooks';
+import { periods } from '@lib/constants';
+import { filteredPosts, setSelectedPeriod } from '@stores/features/postsSlice';
+import { useAppDispatch, useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
-import { DateTime } from 'luxon';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
 
 import { TimelineItem } from './TimelineItem';
 
-const periods = ['Today', 'This Week', 'This Month'] as const;
-
-type Period = (typeof periods)[number];
-
 export const Timeline = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('Today');
   const postsStore = useAppSelector((state) => state.postsReducer);
-  /* const dispatch = useAppDispatch(); */
+  const dispatch = useAppDispatch();
 
-  const posts = useMemo<TimelinePost[]>(() => {
-    return postsStore.ids
-      .map((id) => {
-        const post = postsStore.all.get(id);
-        if (!post) {
-          throw Error(`Post with id of ${id} was expected but not found.`);
-        }
-
-        return {
-          ...post,
-          created: DateTime.fromISO(post.created),
-        };
-      })
-      .filter((post) => {
-        if (selectedPeriod === 'Today') {
-          return post.created >= DateTime.now().minus({ days: 1 });
-        }
-
-        if (selectedPeriod === 'This Week') {
-          return post.created >= DateTime.now().minus({ week: 1 });
-        }
-
-        return post;
-      });
-  }, [selectedPeriod]);
-
-  const selectPeriod = (period: Period) => setSelectedPeriod(period);
   return (
     <div>
       <div className="rounded-lg px-4 py-5 shadow-lg sm:px-6 sm:py-2">
@@ -71,10 +38,10 @@ export const Timeline = () => {
                     key={period}
                     href="#"
                     aria-current={period ? 'page' : undefined}
-                    onClick={() => selectPeriod(period)}
+                    onClick={() => dispatch(setSelectedPeriod(period))}
                     className={clsx(
                       'w-1/4 cursor-pointer border-b-2 px-1 py-4 text-center text-sm font-medium',
-                      selectedPeriod === period
+                      postsStore.selectedPeriod === period
                         ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     )}
@@ -91,7 +58,7 @@ export const Timeline = () => {
       <div className="px-4 py-5 sm:p-6">
         <div className="overflow-hidden rounded-md bg-white shadow">
           <ul role="list" className="divide-y divide-gray-200">
-            {posts.map((post) => (
+            {filteredPosts(postsStore).map((post) => (
               <li
                 key={post.id}
                 className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
