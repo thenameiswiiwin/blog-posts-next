@@ -14,7 +14,7 @@ async function main() {
       posts: {
         create: new Array(5).fill(1).map((_, i) => ({
           name: `Project ${i}`,
-          description: `Everything that describes Task ${i}`,
+          description: `Everything that describes Posts ${i}`,
           created: new Date(2023, 6, 5),
         })),
       },
