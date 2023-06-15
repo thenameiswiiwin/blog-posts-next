@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { TimelinePost } from '@lib/posts';
-import Link from 'next/link';
-import { useState } from 'react';
+import type { TimelinePost } from "@lib/posts";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
-import { Button } from './Button';
+import { Button } from "./Button";
 
 interface PostWriterProps {
   post: TimelinePost;
@@ -12,6 +12,13 @@ interface PostWriterProps {
 
 export const PostWriter = ({ post }: PostWriterProps) => {
   const [title, setTitle] = useState(post.title);
+  const contentEditableRef = useRef<HTMLDivElement>(null);
+
+  console.log(contentEditableRef.current);
+
+  useEffect(() => {
+    console.log(contentEditableRef.current?.innerText);
+  }, [contentEditableRef.current?.innerText]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -44,12 +51,13 @@ export const PostWriter = ({ post }: PostWriterProps) => {
               <div className="grid grid-cols-2">
                 <div
                   id="content"
-                  /* name="content" */
-                  contentEditable
-                  /* ref="contentEditable" */
-                />
+                  contentEditable={true}
+                  ref={contentEditableRef}
+                >
+                  This is the post.
+                </div>
                 <div>
-                  <div dangerouslySetInnerHTML={{ __html: 'html' }} />
+                  <div dangerouslySetInnerHTML={{ __html: "html" }} />
                 </div>
               </div>
             </div>
