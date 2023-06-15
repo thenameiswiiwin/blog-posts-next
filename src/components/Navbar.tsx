@@ -8,7 +8,7 @@ export const Navbar = () => {
     <nav>
       <div className="flex justify-end gap-2 pb-4 pt-8">
         <div className="shrink-0">
-          <Link href="/posts/new">
+          <Link href="/post/new">
             <Button type="button" size="small" intent="primary">
               <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
               New Post
