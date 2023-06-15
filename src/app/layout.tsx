@@ -1,5 +1,6 @@
 import '@styles/globals.css';
 
+import { Navbar } from '@components/Navbar';
 import { Providers } from '@stores/provider';
 
 export default function RootLayout({
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <div className="overflow-hidden rounded-lg bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <Navbar />
             <main className="bg-page-gradient pt-nav-height">
               <Providers>{children}</Providers>
             </main>

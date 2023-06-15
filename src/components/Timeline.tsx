@@ -9,7 +9,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Spinner } from './Spinner';
 import { TimelineItem } from './TimelineItem';
@@ -18,8 +18,6 @@ export const Timeline = () => {
   const postsRef = useRef(false);
   const postsStore = useAppSelector((state) => state.postsReducer);
   const dispatch = useAppDispatch();
-
-  const posts = useMemo(() => filteredPosts(postsStore), [postsStore]);
 
   useEffect(() => {
     if (postsRef.current === false) {
@@ -80,7 +78,7 @@ export const Timeline = () => {
             {postsStore.loading ? (
               <Spinner />
             ) : (
-              posts.map((post) => (
+              filteredPosts(postsStore).map((post) => (
                 <li
                   key={post.id}
                   className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
