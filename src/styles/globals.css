@@ -1,3 +1,64 @@
+/* @import url("highlight.js/styles/tokyo-night-dark.css"); */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  ul {
+    list-style: revert !important;
+    list-style-type: inside !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 10px 0 !important;
+    font-size: revert !important;
+  }
+
+  pre {
+    margin: 10px 0 !important;
+  }
+
+  p {
+    margin: 10px 0 !important;
+  }
+}
+
+@layer utilities {
+  .animation-delay {
+    animation-delay: calc(2000ms * 0.1 * var(--i));
+  }
+  .shim {
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(34 197 94);
+  }
+  .shim::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(233, 233, 233, 1) 0,
+      rgba(233, 233, 233, 0.9) 50%,
+      rgba(233, 233, 233, 0.8) 100%
+    );
+    animation: shimmer 3s ease-out infinite;
+    content: "";
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(0%);
+      opacity: 0;
+    }
+  }
+}

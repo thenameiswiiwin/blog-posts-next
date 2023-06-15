@@ -2,35 +2,41 @@
 import type { Period } from '@lib/constants';
 import type { Post, TimelinePost } from '@lib/posts';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
 
 interface PostsState {
   ids: string[];
   all: Map<string, Post>;
   selectedPeriod: Period;
+  loading: boolean;
 }
 
 const initialState = {
   ids: [],
   all: new Map(),
   selectedPeriod: 'Today',
+  loading: false,
 } as PostsState;
 
 function delay() {
-  return new Promise<void>((res) => {
-    setTimeout(res, 1500);
+  return new Promise((resolve) => {
+    setTimeout(resolve, 1500);
   });
 }
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const res = await window.fetch('/api/posts');
-  const data = (await res.json()) as Post[];
+  const res = await fetch('/api/posts');
+  const data = await res.json();
   await delay();
   return data;
 });
 
-export const usePosts = createSlice({
+export const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
@@ -42,7 +48,9 @@ export const usePosts = createSlice({
     builder.addCase(fetchPosts.fulfilled, (state, action) => {
       const ids: string[] = [];
       const all = new Map<string, Post>();
-      action.payload.forEach((post) => {
+
+      state.loading = false;
+      action.payload.forEach((post: Post) => {
         ids.push(post.id);
         all.set(post.id, post);
       });
@@ -50,33 +58,40 @@ export const usePosts = createSlice({
       state.ids = ids;
       state.all = all;
     });
+    builder.addCase(fetchPosts.pending, (state) => {
+      state.loading = true;
+    });
   },
 });
 
-export const { setSelectedPeriod } = usePosts.actions;
-export default usePosts.reducer;
+export const { setSelectedPeriod } = postsSlice.actions;
+export default postsSlice.reducer;
 
-export const filteredPosts = (state: PostsState): TimelinePost[] => {
-  return state.ids
-    .map((id) => {
-      const post = state.all.get(id);
-      if (!post) {
-        throw Error(`Post with id of ${id} was expected but not found.`);
-      }
+export const filteredPosts = createSelector(
+  (state: PostsState) => state,
+  (state): TimelinePost[] => {
+    return state.ids
+      .map((id) => {
+        const post = state.all.get(id);
+        if (!post) {
+          throw Error(`Post with id of ${id} was expected but not found.`);
+        }
 
-      return {
-        ...post,
-        created: DateTime.fromISO(post.created),
-      };
-    })
-    .filter((post) => {
-      if (state.selectedPeriod === 'Today') {
-        return post.created >= DateTime.now().minus({ days: 1 });
-      }
-      if (state.selectedPeriod === 'This Week') {
-        return post.created >= DateTime.now().minus({ week: 1 });
-      }
+        return {
+          ...post,
+          created: DateTime.fromISO(post.created),
+        };
+      })
+      .filter((post) => {
+        if (state.selectedPeriod === 'Today') {
+          return post.created >= DateTime.now().minus({ days: 1 });
+        }
 
-      return post;
-    });
-};
+        if (state.selectedPeriod === 'This Week') {
+          return post.created >= DateTime.now().minus({ week: 1 });
+        }
+
+        return post;
+      });
+  }
+);

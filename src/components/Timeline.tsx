@@ -9,14 +9,28 @@ import {
 import { useAppDispatch, useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useEffect, useMemo, useRef } from 'react';
 
+import { Spinner } from './Spinner';
 import { TimelineItem } from './TimelineItem';
 
 export const Timeline = () => {
+  const postsRef = useRef(false);
   const postsStore = useAppSelector((state) => state.postsReducer);
   const dispatch = useAppDispatch();
 
-  dispatch(fetchPosts());
+  const posts = useMemo(() => filteredPosts(postsStore), [postsStore]);
+
+  useEffect(() => {
+    if (postsRef.current === false) {
+      dispatch(fetchPosts());
+    }
+
+    return () => {
+      postsRef.current = true;
+    };
+  }, []);
+
   return (
     <div>
       <div className="rounded-lg px-4 py-5 shadow-lg sm:px-6 sm:py-2">
@@ -63,14 +77,18 @@ export const Timeline = () => {
       <div className="px-4 py-5 sm:p-6">
         <div className="overflow-hidden rounded-md bg-white shadow">
           <ul role="list" className="divide-y divide-gray-200">
-            {filteredPosts(postsStore).map((post) => (
-              <li
-                key={post.id}
-                className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
-              >
-                <TimelineItem post={post} />
-              </li>
-            ))}
+            {postsStore.loading ? (
+              <Spinner />
+            ) : (
+              posts.map((post) => (
+                <li
+                  key={post.id}
+                  className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
+                >
+                  <TimelineItem post={post} />
+                </li>
+              ))
+            )}
           </ul>
         </div>
       </div>
