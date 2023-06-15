@@ -19,6 +19,7 @@
     "seed": "ts-node -P tsconfig-seed.json -r tsconfig-paths/register --transpileOnly prisma/seed.ts"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@next/font": "13.1.1",
     "@prisma/client": "^4.15.0",
     "@reduxjs/toolkit": "^1.9.5",
