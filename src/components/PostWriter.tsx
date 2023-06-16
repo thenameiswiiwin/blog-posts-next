@@ -1,5 +1,6 @@
 'use client';
 
+import { parseMarkdown } from '@lib/parsedMarkdown';
 import type { TimelinePost } from '@lib/posts';
 import { useEffect, useRef, useState } from 'react';
 
@@ -12,7 +13,12 @@ interface PostWriterProps {
 export const PostWriter = ({ post }: PostWriterProps) => {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.markdown);
+  const html = useRef('');
   const contentEditableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    html.current = parseMarkdown(content);
+  }, [content]);
 
   useEffect(() => {
     if (!contentEditableRef.current) {
@@ -63,8 +69,7 @@ export const PostWriter = ({ post }: PostWriterProps) => {
                 onInput={handleInput}
               />
               <div>
-                {/* <div dangerouslySetInnerHTML={{ __html: html }} /> */}
-                {content}
+                <div dangerouslySetInnerHTML={{ __html: html.current }} />
               </div>
             </div>
           </div>
