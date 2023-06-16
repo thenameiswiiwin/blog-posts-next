@@ -1,3 +1,5 @@
+'use client';
+
 import { PostWriter } from '@components/PostWriter';
 import type { TimelinePost } from '@lib/posts';
 import { DateTime } from 'luxon';
@@ -7,6 +9,7 @@ const post: TimelinePost = {
   title: 'Title',
   created: DateTime.now(),
   markdown: '## Title',
+  html: '<h2>Title</h2>',
 };
 
 export default function NewPostPage() {

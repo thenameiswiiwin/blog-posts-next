@@ -1,5 +1,3 @@
-import 'highlight.js/styles/tokyo-night-dark.css';
-
 import hljs from 'highlight.js';
 import { marked } from 'marked';
 

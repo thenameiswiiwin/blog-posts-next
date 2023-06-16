@@ -1,20 +1,23 @@
-'use client';
+"use client";
 
-import { parseMarkdown } from '@lib/parsedMarkdown';
-import type { TimelinePost } from '@lib/posts';
-import { debounce } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { parseMarkdown } from "@lib/parsedMarkdown";
+import type { TimelinePost } from "@lib/posts";
+import { createPost } from "@stores/features/postsSlice";
+import { useAppDispatch } from "@stores/hooks";
+import { debounce } from "lodash";
+import { useEffect, useRef, useState } from "react";
 
-import { Button } from './Button';
+import { Button } from "./Button";
 
 interface PostWriterProps {
   post: TimelinePost;
 }
 
 export const PostWriter = ({ post }: PostWriterProps) => {
+  const dispatch = useAppDispatch();
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.markdown);
-  const [html, setHtml] = useState('');
+  const [html, setHtml] = useState("");
   const contentEditableRef = useRef<HTMLDivElement>(null);
   const debouncedParseMarkdown = useRef(
     debounce((newContent: string) => {
@@ -41,6 +44,16 @@ export const PostWriter = ({ post }: PostWriterProps) => {
     if (contentEditableRef.current) {
       setContent(contentEditableRef.current.innerText);
     }
+  };
+
+  const handleClick = () => {
+    const newPost: TimelinePost = {
+      ...post,
+      title,
+      markdown: content,
+      html,
+    };
+    dispatch(createPost(newPost));
   };
 
   return (
@@ -103,7 +116,7 @@ export const PostWriter = ({ post }: PostWriterProps) => {
           type="submit"
           size="small"
           intent="primary"
-          /* onClick={handleClick} */
+          onClick={handleClick}
         >
           Save Post
         </Button>

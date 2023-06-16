@@ -47,6 +47,9 @@ export const postsSlice = createSlice({
     setSelectedPeriod: (state, action: PayloadAction<Period>) => {
       state.selectedPeriod = action.payload;
     },
+    createPost: (state, action: PayloadAction<TimelinePost>) => {
+      console.log(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,7 +75,7 @@ export const postsSlice = createSlice({
   },
 });
 
-export const { setSelectedPeriod } = postsSlice.actions;
+export const { setSelectedPeriod, createPost } = postsSlice.actions;
 export default postsSlice.reducer;
 
 export const filteredPosts = createSelector(
