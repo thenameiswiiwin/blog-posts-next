@@ -60,16 +60,20 @@ export const PostWriter = ({ post }: PostWriterProps) => {
             </div>
           </div>
 
-          <div>
+          <div className="prose">
             <div className="grid grid-cols-2">
               <div
                 id="content"
                 contentEditable
                 ref={contentEditableRef}
                 onInput={handleInput}
+                className="p-2"
               />
               <div>
-                <div dangerouslySetInnerHTML={{ __html: html.current }} />
+                <div
+                  dangerouslySetInnerHTML={{ __html: html.current }}
+                  className="p-2"
+                />
               </div>
             </div>
           </div>
