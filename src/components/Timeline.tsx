@@ -9,24 +9,17 @@ import {
 import { useAppDispatch, useAppSelector } from '@stores/hooks';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { Spinner } from './Spinner';
 import { TimelineItem } from './TimelineItem';
 
 export const Timeline = () => {
-  const postsRef = useRef(false);
   const postsStore = useAppSelector((state) => state.postsReducer);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (postsRef.current === false) {
-      dispatch(fetchPosts());
-    }
-
-    return () => {
-      postsRef.current = true;
-    };
+    dispatch(fetchPosts());
   }, []);
 
   return (

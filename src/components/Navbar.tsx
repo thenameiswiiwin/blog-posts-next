@@ -1,7 +1,7 @@
-import { PlusIcon } from '@heroicons/react/20/solid';
-import Link from 'next/link';
+import { PlusIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
-import { Button } from './Button';
+import { Button } from "./Button";
 
 export const Navbar = () => {
   return (
