@@ -15,8 +15,9 @@ import { Spinner } from './Spinner';
 import { TimelineItem } from './TimelineItem';
 
 export const Timeline = () => {
-  const postsStore = useAppSelector((state) => state.postsReducer);
+  const posts = useAppSelector((state) => state.postsReducer);
   const dispatch = useAppDispatch();
+  const filteredPostsList = filteredPosts(posts);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -51,7 +52,7 @@ export const Timeline = () => {
                     onClick={() => dispatch(setSelectedPeriod(period))}
                     className={clsx(
                       'w-1/4 cursor-pointer border-b-2 px-1 py-4 text-center text-sm font-medium',
-                      postsStore.selectedPeriod === period
+                      posts.selectedPeriod === period
                         ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     )}
@@ -68,10 +69,10 @@ export const Timeline = () => {
       <div className="px-4 py-5 sm:p-6">
         <div className="overflow-hidden rounded-md bg-white shadow">
           <ul role="list" className="divide-y divide-gray-200">
-            {postsStore.loading ? (
+            {posts.loading ? (
               <Spinner />
             ) : (
-              filteredPosts(postsStore).map((post) => (
+              filteredPostsList.map((post) => (
                 <li
                   key={post.id}
                   className="relative flex cursor-pointer justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
