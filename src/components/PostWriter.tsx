@@ -2,6 +2,7 @@
 
 import { parseMarkdown } from '@lib/parsedMarkdown';
 import type { TimelinePost } from '@lib/posts';
+import { debounce } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from './Button';
@@ -13,25 +14,33 @@ interface PostWriterProps {
 export const PostWriter = ({ post }: PostWriterProps) => {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.markdown);
-  const html = useRef('');
+  const [html, setHtml] = useState('');
   const contentEditableRef = useRef<HTMLDivElement>(null);
+  const debouncedParseMarkdown = useRef(
+    debounce((newContent: string) => {
+      const parsedHtml = parseMarkdown(newContent);
+      setHtml(parsedHtml);
+    }, 250)
+  ).current;
 
   useEffect(() => {
-    html.current = parseMarkdown(content);
+    debouncedParseMarkdown(content);
+
+    return () => {
+      debouncedParseMarkdown.cancel();
+    };
   }, [content]);
 
   useEffect(() => {
-    if (!contentEditableRef.current) {
-      throw new Error('contentEditableRef.current DOM node is not found');
+    if (contentEditableRef.current) {
+      contentEditableRef.current.innerText = content;
     }
-    contentEditableRef.current.innerText = content;
   }, []);
 
   const handleInput = () => {
-    if (!contentEditableRef.current) {
-      throw new Error('contentEditableRef.current DOM node is not found');
+    if (contentEditableRef.current) {
+      setContent(contentEditableRef.current.innerText);
     }
-    setContent(contentEditableRef.current.innerText);
   };
 
   return (
@@ -40,7 +49,7 @@ export const PostWriter = ({ post }: PostWriterProps) => {
         <div className="mt-6 flex flex-col gap-x-6 gap-y-8">
           <div>
             <label
-              htmlFor="username"
+              htmlFor="title"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
               Title
@@ -71,7 +80,7 @@ export const PostWriter = ({ post }: PostWriterProps) => {
               />
               <div>
                 <div
-                  dangerouslySetInnerHTML={{ __html: html.current }}
+                  dangerouslySetInnerHTML={{ __html: html }}
                   className="p-2"
                 />
               </div>

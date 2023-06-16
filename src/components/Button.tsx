@@ -1,6 +1,5 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import clsx from 'clsx';
 import Link from 'next/link';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
 
@@ -44,14 +43,6 @@ const buttonClasses = cva(
     },
   }
 );
-
-export const Highlight = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <span className={clsx('highlight', className)}>{children}</span>;
 
 export const Button = ({ children, intent, size, ...props }: ButtonProps) => {
   const classes = buttonClasses({ intent, size, className: props.className });

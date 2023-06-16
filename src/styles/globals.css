@@ -30,7 +30,11 @@
     @apply bg-gray-100 p-4 w-full overflow-x-auto whitespace-pre-wrap break-words;
   }
 
-  code {
+  pre > code {
+    @apply bg-transparent;
+  }
+
+  p > code {
     @apply bg-gray-100 p-1 text-sm text-[#bb9af7];
   }
 }
