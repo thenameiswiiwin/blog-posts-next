@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import type { TimelinePost } from "@lib/posts";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import type { TimelinePost } from '@lib/posts';
+import { useEffect, useRef, useState } from 'react';
 
-import { Button } from "./Button";
+import { Button } from './Button';
 
 interface PostWriterProps {
   post: TimelinePost;
@@ -12,53 +11,60 @@ interface PostWriterProps {
 
 export const PostWriter = ({ post }: PostWriterProps) => {
   const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.markdown);
   const contentEditableRef = useRef<HTMLDivElement>(null);
 
-  console.log(contentEditableRef.current);
-
   useEffect(() => {
-    console.log(contentEditableRef.current?.innerText);
-  }, [contentEditableRef.current?.innerText]);
+    if (!contentEditableRef.current) {
+      throw new Error('contentEditableRef.current DOM node is not found');
+    }
+    contentEditableRef.current.innerText = content;
+  }, []);
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+  const handleInput = () => {
+    if (!contentEditableRef.current) {
+      throw new Error('contentEditableRef.current DOM node is not found');
+    }
+    setContent(contentEditableRef.current.innerText);
   };
+
   return (
     <div>
-      <div>
-        <div className="border-b border-gray-900/10 pb-12">
-          <div className="mt-6 flex flex-col gap-x-6 gap-y-8">
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Title
-              </label>
-              <div className="mt-2">
+      <div className="border-b border-gray-900/10 pb-12">
+        <div className="mt-6 flex flex-col gap-x-6 gap-y-8">
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Title
+            </label>
+            <div className="mt-2">
+              <div className="rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-green-600">
                 <input
                   type="text"
                   name="title"
                   id="title"
-                  onChange={handleTitleChange}
-                  className="w-full rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-green-600"
+                  autoComplete="title"
+                  className="block w-full border-0 bg-transparent p-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
-              {title}
             </div>
+          </div>
 
-            <div>
-              <div className="grid grid-cols-2">
-                <div
-                  id="content"
-                  contentEditable={true}
-                  ref={contentEditableRef}
-                >
-                  This is the post.
-                </div>
-                <div>
-                  <div dangerouslySetInnerHTML={{ __html: "html" }} />
-                </div>
+          <div>
+            <div className="grid grid-cols-2">
+              <div
+                id="content"
+                contentEditable
+                ref={contentEditableRef}
+                onInput={handleInput}
+              />
+              <div>
+                {/* <div dangerouslySetInnerHTML={{ __html: html }} /> */}
+                {content}
               </div>
             </div>
           </div>
@@ -66,17 +72,21 @@ export const PostWriter = ({ post }: PostWriterProps) => {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Link href="/">
-          <Button
-            type="button"
-            size="small"
-            intent="secondary"
-            className="text-gray-900"
-          >
-            Cancel
-          </Button>
-        </Link>
-        <Button type="submit" size="small" intent="primary">
+        <Button
+          href="/"
+          type="button"
+          size="small"
+          intent="secondary"
+          className="text-gray-900"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          size="small"
+          intent="primary"
+          /* onClick={handleClick} */
+        >
           Save Post
         </Button>
       </div>

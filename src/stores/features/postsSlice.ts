@@ -30,10 +30,14 @@ function delay() {
 }
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const res = await fetch('/api/posts');
-  const data = await res.json();
-  await delay();
-  return data;
+  try {
+    const res = await fetch('/api/posts');
+    const data = await res.json();
+    await delay();
+    return data;
+  } catch (error) {
+    throw new Error('Failed to fetch posts.');
+  }
 });
 
 export const postsSlice = createSlice({
@@ -45,22 +49,26 @@ export const postsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchPosts.fulfilled, (state, action) => {
-      const ids: string[] = [];
-      const all = new Map<string, Post>();
+    builder
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        const ids: string[] = [];
+        const all = new Map<string, Post>();
 
-      state.loading = false;
-      action.payload.forEach((post: Post) => {
-        ids.push(post.id);
-        all.set(post.id, post);
+        state.loading = false;
+        action.payload.forEach((post: Post) => {
+          ids.push(post.id);
+          all.set(post.id, post);
+        });
+
+        state.ids = ids;
+        state.all = all;
+      })
+      .addCase(fetchPosts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPosts.rejected, (state) => {
+        state.loading = false;
       });
-
-      state.ids = ids;
-      state.all = all;
-    });
-    builder.addCase(fetchPosts.pending, (state) => {
-      state.loading = true;
-    });
   },
 });
 
@@ -70,28 +78,32 @@ export default postsSlice.reducer;
 export const filteredPosts = createSelector(
   (state: PostsState) => state,
   (state): TimelinePost[] => {
-    return state.ids
-      .map((id) => {
-        const post = state.all.get(id);
-        if (!post) {
-          throw Error(`Post with id of ${id} was expected but not found.`);
-        }
+    try {
+      return state.ids
+        .map((id) => {
+          const post = state.all.get(id);
+          if (!post) {
+            throw Error(`Post with id of ${id} was expected but not found.`);
+          }
 
-        return {
-          ...post,
-          created: DateTime.fromISO(post.created),
-        };
-      })
-      .filter((post) => {
-        if (state.selectedPeriod === 'Today') {
-          return post.created >= DateTime.now().minus({ days: 1 });
-        }
+          return {
+            ...post,
+            created: DateTime.fromISO(post.created),
+          };
+        })
+        .filter((post) => {
+          if (state.selectedPeriod === 'Today') {
+            return post.created >= DateTime.now().minus({ days: 1 });
+          }
 
-        if (state.selectedPeriod === 'This Week') {
-          return post.created >= DateTime.now().minus({ week: 1 });
-        }
+          if (state.selectedPeriod === 'This Week') {
+            return post.created >= DateTime.now().minus({ week: 1 });
+          }
 
-        return post;
-      });
+          return post;
+        });
+    } catch (error) {
+      throw new Error('Failed to filter posts.');
+    }
   }
 );

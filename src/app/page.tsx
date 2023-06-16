@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { Timeline } from "@components/Timeline";
-import { useEffect, useState } from "react";
-import Loading from "./loading";
+import { Timeline } from '@components/Timeline';
+import { useEffect, useState } from 'react';
+
+import Loading from './loading';
 
 const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
